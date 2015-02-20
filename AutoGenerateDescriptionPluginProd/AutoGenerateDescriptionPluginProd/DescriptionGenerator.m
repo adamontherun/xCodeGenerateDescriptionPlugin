@@ -8,23 +8,38 @@
 
 #import "DescriptionGenerator.h"
 
+@interface DescriptionGenerator ()
+
+@property (nonatomic) NSString *currentClass;
+
+@end
 
 @implementation DescriptionGenerator
 
-
 - (void)generateDescription
+{
+    self.currentClass = [[DTXcodeUtils getCurrentClassNameByCurrentSelectedRange] lastObject];
+    NSString *selectedString = [self selectedString];
+    NSString *descriptionMethod = [self prepareDescriptionMethodWithSelectedString:selectedString];
+    NSLog(@"%@", descriptionMethod);
+    [self writeMethodToFileWithDescriptionMethod:descriptionMethod];
+}
+
+- (NSString *)selectedString
 {
     // This is a reference to the current source code editor.
     DVTSourceTextView *sourceTextView = [DTXcodeUtils currentSourceTextView];
-    NSString *currentClass = [[DTXcodeUtils getCurrentClassNameByCurrentSelectedRange] lastObject];
-    
     // Get the range of the selected text within the source code editor.
     NSRange selectedTextRange = [sourceTextView selectedRange];
     // Get the selected text using the range from above.
     NSString *selectedString = [sourceTextView.textStorage.string substringWithRange:selectedTextRange];
+    return selectedString;
+}
+
+- (NSString *)prepareDescriptionMethodWithSelectedString:(NSString *)selectedString
+{
     NSArray* properties = [selectedString split:RX(@"[;]")];
-    
-    NSMutableString *leftSideString = [NSMutableString stringWithFormat:@"@\"%@ description:\\n%%@ ", currentClass];
+    NSMutableString *leftSideString = [NSMutableString stringWithFormat:@"@\"%@ description:\\n%%@ ", self.currentClass];
     NSMutableString *rightSideString = [NSMutableString stringWithString:@"[super description]"];
     
     for (NSString *property in properties)
@@ -44,27 +59,27 @@
             [leftSideString appendString:[NSString stringWithFormat:@"%@: %@\\n", iVarName, token]];
             [rightSideString appendString:[NSString stringWithFormat:@", %@", formattedRightSide]];
         }
-        
     }
     [leftSideString appendString:@"\""];
-    
     NSString *descriptionMethod = [NSString stringWithFormat:@"\n- (NSString *)description\n{\n    return [NSString stringWithFormat:%@,%@];\n}\n", leftSideString, rightSideString];
-    
-    NSLog(@"%@", descriptionMethod);
-    
+    return descriptionMethod;
+}
+
+- (void)writeMethodToFileWithDescriptionMethod:(NSString *)descriptionMethod
+{
     [DTXcodeUtils openFile:[DTXcodeUtils getDotMFilePathOfCurrentEditFile]];
     DVTSourceTextView *textView = [DTXcodeUtils currentSourceTextView];
     NSString *textViewText = [textView string];
-    NSRange contentRange = [DTXcodeUtils getClassImplementContentRangeWithClassName:currentClass mFileText:textViewText];
+    NSRange contentRange = [DTXcodeUtils getClassImplementContentRangeWithClassName:self.currentClass mFileText:textViewText];
     NSRange insertRange  = [DTXcodeUtils getInsertRangeWithClassImplementContentRange:contentRange];
-    NSLog(@"content range is %@", NSStringFromRange(contentRange));
-    NSLog(@"insert range is %@", NSStringFromRange(insertRange));
-    
     [textView scrollRangeToVisible:insertRange];
     
     NSString *textViewTextSpacesRemoved = [textViewText stringByReplacingOccurrencesOfString:@" " withString:@""];
     if ([textViewTextSpacesRemoved containsString:@")description"])
     {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"Description method NOT generated because you already have one. Please delete existing method and try again."];
+        [alert runModal];
         return;
     }
     else
@@ -183,6 +198,5 @@
         token = @"%@";
     }
     return token;
-
 }
 @end
