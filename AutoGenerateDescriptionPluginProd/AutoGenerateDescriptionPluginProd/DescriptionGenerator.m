@@ -46,6 +46,10 @@
     {
         if (property.length != 0)
         {
+            if ([property hasPrefix:@"//"] || [property hasPrefix:@"/*"])
+            {
+                continue;
+            }
             NSRange rangeOfComment = [property rangeOfString:@"//"];
             NSMutableString *propertyStrippedOfTrailingCommentsAndSemiColon = nil;
             if (rangeOfComment.length >0) {
