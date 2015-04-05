@@ -84,8 +84,8 @@
     NSRange contentRange = [DTXcodeUtils getClassImplementContentRangeWithClassName:self.currentClass mFileText:textViewText];
     NSRange insertRange  = [DTXcodeUtils getInsertRangeWithClassImplementContentRange:contentRange];
     [textView scrollRangeToVisible:insertRange];
-    
-    NSString *textViewTextSpacesRemoved = [textViewText stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSString *newLinesRemoved = [[textViewText componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
+    NSString *textViewTextSpacesRemoved = [newLinesRemoved stringByReplacingOccurrencesOfString:@" " withString:@""];
     if ([textViewTextSpacesRemoved containsString:@")description"])
     {
         NSAlert *alert = [[NSAlert alloc] init];
