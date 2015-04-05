@@ -38,7 +38,7 @@
 
 - (NSString *)prepareDescriptionMethodWithSelectedString:(NSString *)selectedString
 {
-    NSArray* properties = [selectedString split:RX(@"[;]")];
+    NSArray *properties = [selectedString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
     NSMutableString *leftSideString = [NSMutableString stringWithFormat:@"@\"%@ description:\\n%%@ ", self.currentClass];
     NSMutableString *rightSideString = [NSMutableString stringWithString:@"[super description]"];
     
@@ -46,10 +46,21 @@
     {
         if (property.length != 0)
         {
-            NSArray* iVarNameMatches = [RX(@"\\w+$") matches:property];
+            NSRange rangeOfComment = [property rangeOfString:@"//"];
+            NSMutableString *propertyStrippedOfTrailingCommentsAndSemiColon = nil;
+            if (rangeOfComment.length >0) {
+                propertyStrippedOfTrailingCommentsAndSemiColon = [[property substringToIndex:rangeOfComment.location]copy];
+                propertyStrippedOfTrailingCommentsAndSemiColon = [[propertyStrippedOfTrailingCommentsAndSemiColon stringByReplacingOccurrencesOfString:@" " withString:@""]copy];
+            }
+            else
+            {
+             propertyStrippedOfTrailingCommentsAndSemiColon = [property copy];
+            }
+            propertyStrippedOfTrailingCommentsAndSemiColon = [[propertyStrippedOfTrailingCommentsAndSemiColon stringByReplacingOccurrencesOfString:@";" withString:@""] copy];
+            NSArray* iVarNameMatches = [RX(@"\\w+$") matches:propertyStrippedOfTrailingCommentsAndSemiColon];
             NSString *iVarName = [iVarNameMatches firstObject];
             NSString *iVarNamePrependedWithSelf = [NSString stringWithFormat:@"self.%@", iVarName];
-            NSString *propertyStrippedOfiVar = [property stringByReplacingOccurrencesOfString:iVarName withString:@""];
+            NSString *propertyStrippedOfiVar = [propertyStrippedOfTrailingCommentsAndSemiColon stringByReplacingOccurrencesOfString:iVarName withString:@""];
             NSString *propertyStrippedOfPunctuation = [propertyStrippedOfiVar stringByTrimmingCharactersInSet:[NSCharacterSet punctuationCharacterSet]];
             NSString *propertyStrippedOfWhiteSpace = [propertyStrippedOfPunctuation stringByReplacingOccurrencesOfString:@" " withString:@""];
             NSArray* dataTypeMatches = [RX(@"\\w+$") matches:propertyStrippedOfWhiteSpace];
