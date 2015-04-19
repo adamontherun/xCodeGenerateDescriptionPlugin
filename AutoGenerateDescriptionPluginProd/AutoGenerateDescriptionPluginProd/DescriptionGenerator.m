@@ -105,113 +105,42 @@
 
 - (NSString *)formatRightSideWithDataType:(NSString *)dataType iVar:(NSString *)iVar
 {
-    NSString *formattedIVar;
-    if ([dataType isEqualToString:@"NSRange"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromRange(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"CGPoint"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromCGPoint(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"CGVector"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromCGVector(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"CGSize"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromCGSize(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"CGRect"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromCGRect(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"CGAffineTransform"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromCGAffineTransform(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"UIEdgeInsets"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromUIEdgeInsets(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"UIOffset"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromUIOffset(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"SEL"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromSelector(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"Class"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromClass(%@)", iVar];
-    }
-    else if ([dataType isEqualToString:@"Protocol"])
-    {
-        formattedIVar = [NSString stringWithFormat:@"NSStringFromProtocol(%@)", iVar];
-    }
-    else
-    {
-        formattedIVar = iVar;
-    }
-    return formattedIVar;
+    NSDictionary *tableMethod = @{
+                                  @"NSRange": [NSString stringWithFormat:@"NSStringFromRange(%@)", iVar],
+                                  @"CGPoint": [NSString stringWithFormat:@"NSStringFromCGPoint(%@)", iVar],
+                                  @"CGVector": [NSString stringWithFormat:@"NSStringFromCGVector(%@)", iVar],
+                                  @"CGSize": [NSString stringWithFormat:@"NSStringFromCGSize(%@)", iVar],
+                                  @"CGRect": [NSString stringWithFormat:@"NSStringFromCGRect(%@)", iVar],
+                                  @"CGAffineTransform": [NSString stringWithFormat:@"NSStringFromCGAffineTransform(%@)", iVar],
+                                  @"UIEdgeInsets": [NSString stringWithFormat:@"NSStringFromUIEdgeInsets(%@)", iVar],
+                                  @"UIOffset": [NSString stringWithFormat:@"NSStringFromUIOffset(%@)", iVar],
+                                  @"SEL": [NSString stringWithFormat:@"NSStringFromSelector(%@)", iVar],
+                                  @"Class": [NSString stringWithFormat:@"NSStringFromClass(%@)", iVar],
+                                  @"Protocol": [NSString stringWithFormat:@"NSStringFromProtocol(%@)", iVar]
+                                  };
+    NSString *formattedIVar = tableMethod[dataType];
+    return (formattedIVar ? formattedIVar : iVar);
 }
 
 - (NSString *)matchTokenToDatatype:(NSString *)dataType
 {
-    NSString *token;
-    if ([dataType isEqualToString:@"int"])
-    {
-        token = @"%zd";
-    }
-    else if ([dataType isEqualToString:@"unsignedint"])
-    {
-        token = @"%u";
-    }
-    else if ([dataType isEqualToString:@"double"])
-    {
-        token = @"%f";
-    }
-    else if ([dataType isEqualToString:@"float"])
-    {
-        token = @"%f";
-    }
-    else if ([dataType isEqualToString:@"unsignedchar"])
-    {
-        token = @"%c";
-    }
-    else if ([dataType isEqualToString:@"unichar"])
-    {
-        token = @"%C";
-    }
-    else if ([dataType isEqualToString:@"NSInteger"])
-    {
-        token = @"%zd";
-    }
-    else if ([dataType isEqualToString:@"NSUInteger"])
-    {
-        token = @"%zd";
-    }
-    else if ([dataType isEqualToString:@"CGFloat"])
-    {
-        token = @"%f";
-    }
-    else if ([dataType isEqualToString:@"CFIndex"])
-    {
-        token = @"%ld";
-    }
-    else if ([dataType isEqualToString:@"pointer"])
-    {
-        token = @"%p";
-    }
-    else if ([dataType isEqualToString:@"BOOL"])
-    {
-        token = @"%i";
-    }
-    else
-    {
-        token = @"%@";
-    }
-    return token;
+    NSDictionary *tableMethod = @{
+                                  @"int": @"%zd",
+                                  @"unsignedint": @"%u",
+                                  @"double": @"%f",
+                                  @"float": @"%f",
+                                  @"unsignedchar": @"%c",
+                                  @"unichar": @"%C",
+                                  @"NSInteger": @"%zd",
+                                  @"NSUInteger": @"%zd",
+                                  @"CGFloat": @"%f",
+                                  @"CFIndex": @"%ld",
+                                  @"pointer": @"%p",
+                                  @"BOOL": @"%i"
+                                  };
+
+    NSString *token = tableMethod[dataType];
+    return (token ? token : @"%@");
 }
+
 @end
