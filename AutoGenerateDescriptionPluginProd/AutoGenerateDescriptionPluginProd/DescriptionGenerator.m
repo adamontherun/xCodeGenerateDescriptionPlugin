@@ -42,7 +42,7 @@
 
     for (NSString *property in properties) {
         if (property.length != 0) {
-            if ([property hasPrefix:@"//"] || [property hasPrefix:@"/*"]) {
+            if ([property hasPrefix:@"//"] || [property hasPrefix:@"/*"] || [property hasPrefix:@" *"] || [property hasPrefix:@" */"]) {
                 continue;
             }
 
@@ -59,7 +59,7 @@
             propertyStrippedOfTrailingCommentsAndSemiColon = [[propertyStrippedOfTrailingCommentsAndSemiColon stringByReplacingOccurrencesOfString:@";" withString:@""] copy];
 
 
-            NSString *iVarWithOutPropertyPrefix = [RX(@"@property[ ]*[\\(.+\\)]?[ ]*") replace:propertyStrippedOfTrailingCommentsAndSemiColon withBlock:^NSString *(NSString *match) {
+            NSString *iVarWithOutPropertyPrefix = [RX(@"@property[ ]*\\(.+\\)[ ]*") replace:propertyStrippedOfTrailingCommentsAndSemiColon withBlock:^NSString *(NSString *match) {
                 return @"";
             }];
 
