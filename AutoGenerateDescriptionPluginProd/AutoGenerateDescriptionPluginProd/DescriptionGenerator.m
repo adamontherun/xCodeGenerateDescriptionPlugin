@@ -37,7 +37,7 @@
 
 - (NSString *)prepareDescriptionMethodWithSelectedString:(NSString *)selectedString {
     NSArray *properties = [selectedString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-    NSMutableString *leftSideString = [NSMutableString stringWithFormat:@"@\"%@ description:\\n%%@ ", self.currentClass];
+    NSMutableString *leftSideString = [NSMutableString stringWithFormat:@"@\"%@ description:%%@\\n ", self.currentClass];
     NSMutableString *rightSideString = [NSMutableString stringWithString:@"[super description]"];
 
     for (NSString *property in properties) {
