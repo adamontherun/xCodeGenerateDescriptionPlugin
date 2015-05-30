@@ -13,7 +13,7 @@ Restart Xcode regardless of install method.
 
 ## Usage
 1. In the .h file of your class, select all the properties you want included in your - (NSString *)description method. 
-2. In the edit menu select Make Description or Cmd + Ctrl + m
+2. In the edit menu select Make Description
 3. Plugin will do all the work for you.
 
 .h
